@@ -1,332 +1,225 @@
---DROP table NguoiDung;
---Tao bang NguoiDung
-create table NguoiDung(
-    ID_ND NUMBER(8,0),
-    Email varchar2(50),
-    Matkhau varchar2(20),
-    VerifyCode varchar2(10)DEFAULT NULL,
-    Trangthai varchar2(10) DEFAULT '',
-    Vaitro varchar2(20)
+CREATE DATABASE IF NOT EXISTS DB_RestaurantManagement;
+use DB_RestaurantManagement;
+CREATE TABLE NguoiDung(
+    ID_ND INT(8),
+    Email VARCHAR(50),
+    Matkhau VARCHAR(20),
+    VerifyCode VARCHAR(10) DEFAULT NULL,
+    Trangthai VARCHAR(10) DEFAULT '',
+    Vaitro VARCHAR(20),
+    CONSTRAINT ND_Email_NNULL CHECK (Email IS NOT NULL),
+    CONSTRAINT ND_Matkhau_NNULL CHECK (Matkhau IS NOT NULL),
+    CONSTRAINT ND_Vaitro_Ten CHECK (Vaitro IN ('Khach Hang','Nhan Vien','Nhan Vien Kho','Quan Ly')),
+    PRIMARY KEY (ID_ND)
 );
----Them rang buoc
-alter table NguoiDung
-    add constraint ND_Email_NNULL check ('Email' is not null)
-    add constraint ND_Matkhau_NNULL check ('Matkhau' is not null)
-    add constraint ND_Vaitro_Ten check (Vaitro in ('Khach Hang','Nhan Vien','Nhan Vien Kho','Quan Ly'));
-
----Them khoa chinh
-alter table NguoiDung
-    add constraint NguoiDung_PK PRIMARY KEY (ID_ND);
-    
---Tao bang NhanVien
---drop table NhanVien;
-create table NhanVien(
-    ID_NV NUMBER(8,0),
-    TenNV VARCHAR2(50),
-    NgayVL DATE ,
-    SDT VARCHAR2(50),
-    Chucvu VARCHAR2(50),
-    ID_ND NUMBER(8,0) DEFAULT NULL,
-    ID_NQL NUMBER(8,0),
-    Tinhtrang VARCHAR2(20)
+select * from NguoiDung;
+INSERT INTO NguoiDung (ID_ND,Email, Matkhau, Vaitro) VALUES (1,'123@gmail.com', '123', 'Khach Hang');
+INSERT INTO NguoiDung (ID_ND,Email, Matkhau, Vaitro) VALUES (2,'nhanvien@gmail.com', '123', 'Nhan Vien');
+INSERT INTO NguoiDung (ID_ND,Email, Matkhau, Vaitro) VALUES (3,'nhanvienkho@gmail.com', '123', 'Nhan Vien Kho');
+INSERT INTO NguoiDung (ID_ND,Email, Matkhau, Vaitro) VALUES (4,'quanly@gmail.com', '123', 'Quan Ly');
+INSERT INTO NguoiDung (ID_ND,Email, Matkhau, Vaitro) VALUES (5,'quanly1@gmail.com', '123', 'Quan Ly');
+-- Create table NhanVien
+CREATE TABLE NhanVien(
+    ID_NV INT(8),
+    TenNV VARCHAR(50),
+    NgayVL DATE,
+    SDT VARCHAR(50),
+    Chucvu VARCHAR(50),
+    ID_ND INT(8) DEFAULT NULL,
+    ID_NQL INT(8),
+    Tinhtrang VARCHAR(20),
+    CONSTRAINT NV_TenNV_NNULL CHECK (TenNV IS NOT NULL),
+    CONSTRAINT NV_SDT_NNULL CHECK (SDT IS NOT NULL),
+    CONSTRAINT NV_NgayVL_NNULL CHECK (NgayVL IS NOT NULL),
+    CONSTRAINT NV_Chucvu_Thuoc CHECK (Chucvu IN ('Phuc vu','Tiep tan','Thu ngan','Bep','Kho','Quan ly')),
+    CONSTRAINT NV_Tinhtrang_Thuoc CHECK (Tinhtrang IN ('Dang lam viec','Da nghi viec')),
+    PRIMARY KEY (ID_NV),
+    CONSTRAINT NV_fk_idND FOREIGN KEY (ID_ND) REFERENCES NguoiDung(ID_ND),
+    CONSTRAINT NV_fk_idNQL FOREIGN KEY (ID_NQL) REFERENCES NhanVien(ID_NV)
 );
---Them rang buoc cho bang NhanVien
---Them Check Constraint
-alter table NhanVien
-    add constraint NV_TenNV_NNULL check ('TenNV' is not null)
-    add constraint NV_SDT_NNULL check ('SDT' is not null)
-    add constraint NV_NgayVL_NNULL check ('NgayVL' is not null)
-    add constraint NV_Chucvu_Thuoc check (Chucvu IN ('Phuc vu','Tiep tan','Thu ngan','Bep','Kho','Quan ly'))
-    add constraint NV_Tinhtrang_Thuoc check (Tinhtrang IN ('Dang lam viec','Da nghi viec'));
-
---Them khoa chinh
-alter table NhanVien
-    add constraint NV_PK PRIMARY KEY (ID_NV);
-
---Them khoa ngoai
-ALTER TABLE NhanVien
- ADD CONSTRAINT NV_fk_idND FOREIGN KEY 
- (ID_ND) REFERENCES NguoiDung(ID_ND)
- ADD CONSTRAINT NV_fk_idNQL FOREIGN KEY 
- (ID_NQL) REFERENCES NhanVien(ID_NV);
- 
-
---Tao bang KhachHang
---drop table KhachHang;
-create table KhachHang(
-    ID_KH NUMBER(8,0),
-    TenKH varchar2(50), 
-    Ngaythamgia date, 
-    Doanhso number(10,0) DEFAULT 0, 
-    Diemtichluy number(5,0) DEFAULT 0,
-    ID_ND NUMBER(8,0)
-);
---Them Check Constraint
-alter table KhachHang
-    add constraint KH_TenKH_NNULL check ('TenKH' is not null)
-    add constraint KH_Ngaythamgia_NNULL check ('Ngaythamgia' is not null)
-    add constraint KH_Doanhthu_NNULL check ('Doanhthu' is not null)
-    add constraint KH_Diemtichluy_NNULL check ('Diemtichluy' is not null)
-    add constraint KH_IDND_NNULL check ('ID_ND' is not null);
-
----Them khoa chinh
-alter table KhachHang
-    add constraint KhachHang_PK PRIMARY KEY (ID_KH);
-    
----Them khoa ngoai
-ALTER TABLE KhachHang
- ADD CONSTRAINT KH_fk_idND FOREIGN KEY 
- (ID_ND) REFERENCES NguoiDung(ID_ND);
-
---Tao bang MonAn
---drop table MonAn;
-create table MonAn(
-    ID_MonAn NUMBER(8,0),
-    TenMon varchar2(50), 
-    DonGia number(8,0),
-    Loai varchar2(50),
-    TrangThai varchar2(30)
-);
---Them Check Constraint
-alter table MonAn
-    add constraint MA_TenMon_NNULL check ('TenMon' is not null)
-    add constraint MA_DonGia_NNULL check ('Dongia' is not null)
-    add constraint MA_Loai_Ten check (Loai in ('Aries','Taurus','Gemini','Cancer','Leo','Virgo'
-                                                 ,'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'))
-    add constraint MA_TrangThai_Thuoc check (TrangThai in('Dang kinh doanh','Ngung kinh doanh'));                                             
-
---Them khoa chinh
-alter table MonAn
-    add constraint MonAn_PK PRIMARY KEY (ID_MonAn);
+select * from NhanVien;
+INSERT INTO NhanVien (ID_NV, TenNV, NgayVL, SDT, Chucvu, ID_ND, Tinhtrang)
+VALUES (1, 'Pham Hoai Vu', '2023-04-28', '0123456789', 'Tiep tan', 2, 'Dang lam viec');
 
 
---Tao bang Ban
---drop table Ban;
-create table Ban(
-    ID_Ban NUMBER(8,0),
-    TenBan varchar2(50), 
-    Vitri varchar2(50), 
-    Trangthai varchar2(50)
-);
---Them Check Constraint
-alter table Ban
-    add constraint Ban_TenBan_NNULL check ('TenBan' is not null)
-    add constraint Ban_Vitri_NNULL check ('Vitri' is not null)
-    add constraint Ban_Trangthai_Ten check (Trangthai in ('Con trong','Dang dung bua','Da dat truoc'));
+-- Create table KhachHang
+select * from hoadon;
+select * from CTHD;
+select * from ban;
+INSERT INTO KhachHang (ID_KH, TenKH, Ngaythamgia, ID_ND)
+VALUES (1, 'Tên khách hàng', '2024-04-28', 1);
 
-
---Them khoa chinh
-alter table Ban
-    add constraint Ban_PK PRIMARY KEY (ID_Ban);
-
-
---Tao bang Voucher
-
---Tao bang Voucher
---drop table Voucher;
-
-create table Voucher(
-    Code_Voucher varchar2(10),
-    Mota varchar2(50),
-    Phantram number(3,0),
-    LoaiMA varchar2(50),
-    SoLuong number(3,0),
-    Diem number(8,0)
-);
---Them Check Constraint
-alter table Voucher
-    add constraint V_Code_NNULL check ('Code_Voucher' is not null)
-    add constraint V_Mota_NNULL check ('Mota' is not null)
-    add constraint V_Phantram_NNULL check (Phantram > 0 AND Phantram <= 100)
-    add constraint V_LoaiMA_Thuoc check (LoaiMA in ('All','Aries','Taurus','Gemini','Cancer','Leo','Virgo'
-                                                 ,'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'));
-
----Them khoa chinh
-alter table Voucher
-    add constraint Voucher_PK PRIMARY KEY (Code_Voucher);
-    
---Tao bang HoaDon
---drop table HoaDon;
-
-create table HoaDon(
-    ID_HoaDon NUMBER(8,0),
-    ID_KH number(8,0),
-    ID_Ban number(8,0),
-    NgayHD date,
-    TienMonAn number(8,0),
-    Code_Voucher varchar2(10),
-    TienGiam number(8,0),
-    Tongtien number(10,0),
-    Trangthai varchar2(50)
+CREATE TABLE KhachHang(
+    ID_KH INT(8),
+    TenKH VARCHAR(50),
+    Ngaythamgia DATE,
+    Doanhso INT(10) DEFAULT 0,
+    Diemtichluy INT(5) DEFAULT 0,
+    ID_ND INT(8),
+    CONSTRAINT KH_TenKH_NNULL CHECK (TenKH IS NOT NULL),
+    CONSTRAINT KH_Ngaythamgia_NNULL CHECK (Ngaythamgia IS NOT NULL),
+    CONSTRAINT KH_Doanhso_NNULL CHECK (Doanhso IS NOT NULL),
+    CONSTRAINT KH_Diemtichluy_NNULL CHECK (Diemtichluy IS NOT NULL),
+    CONSTRAINT KH_IDND_NNULL CHECK (ID_ND IS NOT NULL),
+    PRIMARY KEY (ID_KH),
+    CONSTRAINT KH_fk_idND FOREIGN KEY (ID_ND) REFERENCES NguoiDung(ID_ND)
 );
 
---Them Check Constraint
-alter table HoaDon
-    add constraint HD_NgayHD_NNULL check ('TenMon' is not null)
-    add constraint HD_TrangThai check (Trangthai in ('Chua thanh toan','Da thanh toan'));
 
---Them khoa chinh
-alter table HoaDon
-    add constraint HD_PK PRIMARY KEY (ID_HoaDon);
+-- Create table MonAn
+CREATE TABLE MonAn(
+    ID_MonAn INT(8),
+    TenMon VARCHAR(50),
+    DonGia INT(8),
+    Loai VARCHAR(50),
+    TrangThai VARCHAR(30),
+    CONSTRAINT MA_TenMon_NNULL CHECK (TenMon IS NOT NULL),
+    CONSTRAINT MA_DonGia_NNULL CHECK (DonGia IS NOT NULL),
+    CONSTRAINT MA_Loai_Ten CHECK (Loai IN ('Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces')),
+    CONSTRAINT MA_TrangThai_Thuoc CHECK (TrangThai IN ('Dang kinh doanh','Ngung kinh doanh')),
+    PRIMARY KEY (ID_MonAn)
+);
+select * from monan;
+-- Create table Ban
+CREATE TABLE Ban(
+    ID_Ban INT(8),
+    TenBan VARCHAR(50),
+    Vitri VARCHAR(50),
+    Trangthai VARCHAR(50),
+    CONSTRAINT Ban_TenBan_NNULL CHECK (TenBan IS NOT NULL),
+    CONSTRAINT Ban_Vitri_NNULL CHECK (Vitri IS NOT NULL),
+    CONSTRAINT Ban_Trangthai_Ten CHECK (Trangthai IN ('Con trong','Dang dung bua','Da dat truoc')),
+    PRIMARY KEY (ID_Ban)
+);
+select * from monan;
+select * from hoadon WHERE ID_Ban=3 AND Trangthai='Chua thanh toan';
+-- Thêm bàn cho tầng 1
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (1, 'Ban 1A', 'Tầng 1', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (2, 'Ban 2A', 'Tầng 1', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (3, 'Ban 3A', 'Tầng 1', 'Con trong');
 
-ALTER TABLE HoaDon
- ADD CONSTRAINT HD_fk_idKH FOREIGN KEY 
- (ID_KH) REFERENCES KhachHang(ID_KH)
- ADD CONSTRAINT HD_fk_idBan FOREIGN KEY 
- (ID_Ban) REFERENCES Ban(ID_Ban);
- 
+-- Thêm bàn cho tầng 2
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (4, 'Ban 1B', 'Tầng 2', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (5, 'Ban 2B', 'Tầng 2', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (6, 'Ban 3B', 'Tầng 2', 'Con trong');
 
---Tao bang CTHD
---drop table CTHD;
-create table CTHD(
-    ID_HoaDon NUMBER(8,0),
-    ID_MonAn number(8,0),
-    SoLuong number(3,0),
-    Thanhtien number(10,0)
+-- Thêm bàn cho tầng 3
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (7, 'Ban 1C', 'Tầng 3', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (8, 'Ban 2C', 'Tầng 3', 'Con trong');
+INSERT INTO Ban (ID_Ban, TenBan, Vitri, Trangthai) VALUES (9, 'Ban 3C', 'Tầng 3', 'Con trong');
+
+
+-- Create table Voucher
+CREATE TABLE Voucher(
+    Code_Voucher VARCHAR(10),
+    Mota VARCHAR(50),
+    Phantram INT(3),
+    LoaiMA VARCHAR(50),
+    SoLuong INT(3),
+    Diem INT(8),
+    CONSTRAINT V_Code_NNULL CHECK (Code_Voucher IS NOT NULL),
+    CONSTRAINT V_Mota_NNULL CHECK (Mota IS NOT NULL),
+    CONSTRAINT V_Phantram_NNULL CHECK (Phantram > 0 AND Phantram <= 100),
+    CONSTRAINT V_LoaiMA_Thuoc CHECK (LoaiMA IN ('All','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces')),
+    PRIMARY KEY (Code_Voucher)
 );
 
---Them Check Constraint
-alter table CTHD
-    add constraint CTHD_SoLuong_NNULL check ('SoLuong' is not null);
-
---Them khoa chinh
-alter table CTHD
-    add constraint CTHD_PK PRIMARY KEY (ID_HoaDon,ID_MonAn);
-
-ALTER TABLE CTHD
- ADD CONSTRAINT CTHD_fk_idHD FOREIGN KEY 
- (ID_HoaDon) REFERENCES HoaDon(ID_HoaDon)
- ADD CONSTRAINT CTHD_fk_idMonAn FOREIGN KEY 
- (ID_MonAn) REFERENCES MonAn(ID_MonAn);
-
- 
---Tao bang Nguyenlieu
---drop table NguyenLieu;
-create table NguyenLieu(
-    ID_NL NUMBER(8,0),
-    TenNL VARCHAR2(50), 
-    Dongia NUMBER(8,0), 
-    Donvitinh VARCHAR2(50)
-);
---Them Check Constraint
-alter table NguyenLieu
-    add constraint NL_TenNL_NNULL check ('TenNL' is not null)
-    add constraint NL_Dongia_NNULL check ('Dongia' is not null)
-    add constraint NL_DVT_Thuoc check (Donvitinh in ('g','kg','ml','l'));
-
---Them khoa chinh
-alter table NguyenLieu
-    add constraint NL_PK PRIMARY KEY (ID_NL);
-
---Tao bang Kho
---drop table Kho;
-create table Kho(
-    ID_NL NUMBER(8,0),
-    SLTon NUMBER(3,0) DEFAULT 0
-);
---Them Check Constraint
-
-
---Them khoa chinh
-ALTER TABLE Kho
-    ADD CONSTRAINT Kho_pk PRIMARY KEY (ID_NL);
-
---Them khoa ngoai
-ALTER TABLE Kho
- ADD CONSTRAINT Kho_fk_idNL FOREIGN KEY 
- (ID_NL) REFERENCES NguyenLieu(ID_NL);
-
---Tao bang PhieuNK
---drop table PhieuNK;
-create table PhieuNK(
-    ID_NK NUMBER(8,0),
-    ID_NV number(8,0),
-    NgayNK date,
-    Tongtien number(10,0) DEFAULT 0
+-- Create table HoaDon
+CREATE TABLE HoaDon(
+    ID_HoaDon INT(8),
+    ID_KH INT(8),
+    ID_Ban INT(8),
+    NgayHD DATE,
+    TienMonAn INT(8),
+    Code_Voucher VARCHAR(10),
+    TienGiam INT(8),
+    Tongtien INT(10),
+    Trangthai VARCHAR(50),
+    CONSTRAINT HD_NgayHD_NNULL CHECK (NgayHD IS NOT NULL),
+    CONSTRAINT HD_TrangThai CHECK (Trangthai IN ('Chua thanh toan','Da thanh toan')),
+    PRIMARY KEY (ID_HoaDon),
+    CONSTRAINT HD_fk_idKH FOREIGN KEY (ID_KH) REFERENCES KhachHang(ID_KH),
+    CONSTRAINT HD_fk_idBan FOREIGN KEY (ID_Ban) REFERENCES Ban(ID_Ban)
 );
 
---Them Check Constraint
-alter table PhieuNK
-    add constraint PNK_NgayNK_NNULL check ('NgayNK' is not null);
-
---Them khoa chinh
-alter table PhieuNK
-    add constraint PNK_PK PRIMARY KEY (ID_NK);
-
-ALTER TABLE PhieuNK
- ADD CONSTRAINT PNK_fk_idNV FOREIGN KEY 
- (ID_NV) REFERENCES NhanVien(ID_NV);
-
-
---Them bang CTNK
---drop table CTNK;
-create table CTNK(
-    ID_NK NUMBER(8,0),
-    ID_NL number(8,0),
-    SoLuong number(3,0),
-    Thanhtien number(10,0)
+-- Create table CTHD
+CREATE TABLE CTHD(
+    ID_HoaDon INT(8),
+    ID_MonAn INT(8),
+    SoLuong INT(3),
+    Thanhtien INT(10),
+    CONSTRAINT CTHD_SoLuong_NNULL CHECK (SoLuong IS NOT NULL),
+    PRIMARY KEY (ID_HoaDon, ID_MonAn),
+    CONSTRAINT CTHD_fk_idHD FOREIGN KEY (ID_HoaDon) REFERENCES HoaDon(ID_HoaDon),
+    CONSTRAINT CTHD_fk_idMonAn FOREIGN KEY (ID_MonAn) REFERENCES MonAn(ID_MonAn)
 );
 
---Them Check Constraint
-alter table CTNK
-    add constraint CTNK_SL_NNULL check ('SoLuong' is not null);
-
---Them khoa chinh
-alter table CTNK
-    add constraint CTNK_PK PRIMARY KEY (ID_NK,ID_NL);
-    
---Them khoa ngoai
-ALTER TABLE CTNK
- ADD CONSTRAINT CTNK_fk_idNK FOREIGN KEY 
- (ID_NK) REFERENCES PhieuNK(ID_NK)
- ADD CONSTRAINT CTNK_fk_idNL FOREIGN KEY 
- (ID_NL) REFERENCES NguyenLieu(ID_NL);
-
-
---Tao bang PhieuXK
---drop table PhieuXK;
-create table PhieuXK(
-    ID_XK NUMBER(8,0),
-    ID_NV number(8,0),
-    NgayXK date
+-- Create table NguyenLieu
+CREATE TABLE NguyenLieu(
+    ID_NL INT(8),
+    TenNL VARCHAR(50),
+    Dongia INT(8),
+    Donvitinh VARCHAR(50),
+    CONSTRAINT NL_TenNL_NNULL CHECK (TenNL IS NOT NULL),
+    CONSTRAINT NL_Dongia_NNULL CHECK (Dongia IS NOT NULL),
+    CONSTRAINT NL_DVT_Thuoc CHECK (Donvitinh IN ('g','kg','ml','l')),
+    PRIMARY KEY (ID_NL)
 );
 
---Them Check Constraint
-alter table PhieuXK
-    add constraint PXK_NgayXK_NNULL check ('NgayXK' is not null);
-
---Them khoa chinh
-alter table PhieuXK
-    add constraint PXK_PK PRIMARY KEY (ID_XK);
-
-ALTER TABLE PhieuXK
- ADD CONSTRAINT PXK_fk_idNV FOREIGN KEY 
- (ID_NV) REFERENCES NhanVien(ID_NV);
-
-
---Them bang CTXK
---drop table CTXK;
-create table CTXK(
-    ID_XK NUMBER(8,0),
-    ID_NL number(8,0),
-    SoLuong number(3,0)
+-- Create table Kho
+CREATE TABLE Kho(
+    ID_NL INT(8),
+    SLTon INT(3) DEFAULT 0,
+    PRIMARY KEY (ID_NL),
+    CONSTRAINT Kho_fk_idNL FOREIGN KEY (ID_NL) REFERENCES NguyenLieu(ID_NL)
 );
 
---Them Check Constraint
-alter table CTXK
-    add constraint CTXK_SL_NNULL check ('SoLuong' is not null);
+-- Create table PhieuNK
+CREATE TABLE PhieuNK(
+    ID_NK INT(8),
+    ID_NV INT(8),
+    NgayNK DATE,
+    Tongtien INT(10) DEFAULT 0,
+    CONSTRAINT PNK_NgayNK_NNULL CHECK (NgayNK IS NOT NULL),
+    PRIMARY KEY (ID_NK),
+    CONSTRAINT PNK_fk_idNV FOREIGN KEY (ID_NV) REFERENCES NhanVien(ID_NV)
+);
 
---Them khoa chinh
-alter table CTXK
-    add constraint CTXK_PK PRIMARY KEY (ID_XK,ID_NL);
+-- Create table CTNK
+CREATE TABLE CTNK(
+    ID_NK INT(8),
+    ID_NL INT(8),
+    SoLuong INT(3),
+    Thanhtien INT(10),
+    CONSTRAINT CTNK_SL_NNULL CHECK (SoLuong IS NOT NULL),
+    PRIMARY KEY (ID_NK, ID_NL),
+    CONSTRAINT CTNK_fk_idNK FOREIGN KEY (ID_NK) REFERENCES PhieuNK(ID_NK),
+    CONSTRAINT CTNK_fk_idNL FOREIGN KEY (ID_NL) REFERENCES NguyenLieu(ID_NL)
+);
 
---Them khoa ngoai
-ALTER TABLE CTXK
- ADD CONSTRAINT CTNK_fk_idXK FOREIGN KEY 
- (ID_XK) REFERENCES PhieuXK(ID_XK)
- ADD CONSTRAINT CTXK_fk_idNL FOREIGN KEY 
- (ID_NL) REFERENCES NguyenLieu(ID_NL);
+-- Create table PhieuXK
 
+CREATE TABLE PhieuXK(
+    ID_XK INT(8),
+    ID_NV INT(8),
+    NgayXK DATE,
+    PRIMARY KEY (ID_XK),
+    CONSTRAINT PXK_NgayXK_NNULL CHECK (NgayXK IS NOT NULL),
+    CONSTRAINT PXK_fk_idNV FOREIGN KEY (ID_NV) REFERENCES NhanVien(ID_NV)
+);
+
+-- Create table CTXK
+CREATE TABLE CTXK(
+    ID_XK INT(8),
+    ID_NL INT(8),
+    SoLuong INT(3),
+    PRIMARY KEY (ID_XK, ID_NL),
+    CONSTRAINT CTXK_SL_NNULL CHECK (SoLuong IS NOT NULL),
+    CONSTRAINT CTNK_fk_idXK FOREIGN KEY (ID_XK) REFERENCES PhieuXK(ID_XK),
+    CONSTRAINT CTXK_fk_idNL FOREIGN KEY (ID_NL) REFERENCES NguyenLieu(ID_NL)
+);
+
+;
 
 --- Tao Trigger
 

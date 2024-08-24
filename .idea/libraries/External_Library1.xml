@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="External_Library1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/pdfbox-app-2.0.28.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/activation.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/EasyXLS.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/javax.mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/TimingFramework-0.55.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/jcalendar-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/miglayout-4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/classes/External_Library/ojdbc8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
